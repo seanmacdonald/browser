@@ -14,10 +14,13 @@ public class ReadFile extends JFrame{
 	private JButton backButton; 
 	private JButton forwardButton;
 	private Stack<String> urlStack;  
+	private String currentURL = new String();
+	private boolean backButtonPressed = false; 
 	
 	//constructor *********************************************************************************************
 	public ReadFile(){
 		super("Sean's Browser"); //this title appears at the very top of your screen/application  
+		currentURL = ""; //current URL gets an empty string
 		
 		
 		//SET UP ACTION LISTERN FOR TEXT FIELD 
@@ -25,7 +28,7 @@ public class ReadFile extends JFrame{
 		addressBar.addActionListener(
 			new ActionListener(){
 				public void actionPerformed(ActionEvent event){
-					loadWebInformation(event.getActionCommand());  //event.getActionCommand gets the string that was passed into the adressBar
+					loadWebInformation(event.getActionCommand());  //event.getActionCommand gets the string that was passed into the adressBar 
 					//loadWebInformation will be responsible for reading html files and loading them onto the screen
 				}
 			}
@@ -54,15 +57,17 @@ public class ReadFile extends JFrame{
 				}
 			}
 		);
-		
+
 		//SETUP ACTION LISTER FOR THE EDITOR PANE 
 		display = new JEditorPane(); 
 		display.setEditable(false); //would only be true for a program like notepad where you actually changed stuff inside. for this web browser you just view stuff 
+		display.setFont(new Font("SansSerif", Font.BOLD, 20));
 		display.addHyperlinkListener(  //so you can click on links on the page and it will put it in the adressBar
 			new HyperlinkListener(){
 				public void hyperlinkUpdate(HyperlinkEvent event){ //this method will be called whenever a hyperlink event happens 
 					if(event.getEventType() == HyperlinkEvent.EventType.ACTIVATED){
 						loadWebInformation(event.getURL().toString()); 
+						//urlStack.push(event.getURL().toString());
 					}
 					else if(event.getEventType() == HyperlinkEvent.EventType.ENTERED){
 						System.out.println("Bold the hyperlink"); 
@@ -71,7 +76,7 @@ public class ReadFile extends JFrame{
 			}
 		);
 		add(new JScrollPane(display), BorderLayout.CENTER);
-		setSize(800, 400); 
+		setSize(900, 900); 
 		setVisible(true); 
 	}
 	//********************************************************************************************************
@@ -82,9 +87,17 @@ public class ReadFile extends JFrame{
 		try{
 			display.setPage(userText); // setPage is a VERY POWERFUL METHOD. DOES THE WORK FOR US
 			addressBar.setText(userText); //This keeps the same url in the address box
-			urlStack.push(userText); 
+			if(!backButtonPressed){
+				urlStack.push(currentURL); 
+				currentURL = userText; 
+			}
+			else{
+				backButtonPressed = false; 
+			}
 		}catch (Exception e){
-			System.out.println("WHOOPS! That's not a valid URL"); 
+			System.out.println("WHOOPS! That's not a valid URL");
+			display.setText("That Site Cannot Be Reached!!!");
+			addressBar.setText("ERROR");
 		}
 				
 	}
@@ -93,6 +106,7 @@ public class ReadFile extends JFrame{
 	private void backButtonPressed(){
 		System.out.println("Back Button Pressed"); 
 		if(!(urlStack.isEmpty())){
+			backButtonPressed = true; 
 			loadWebInformation(urlStack.pop());
 			//System.out.println(urlStack.pop()); 
 		}
