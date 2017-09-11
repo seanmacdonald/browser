@@ -5,7 +5,7 @@ import java.util.Stack;
 import javax.swing.*; 
 import javax.swing.event.*; 
 
-public class ReadFile extends JFrame{
+public class Browser extends JFrame{
 	
 	private JTextField addressBar; 
 	private JEditorPane display; 
@@ -18,12 +18,12 @@ public class ReadFile extends JFrame{
 	private boolean backButtonPressed = false; 
 	
 	//constructor *********************************************************************************************
-	public ReadFile(){
+	public Browser(){
 		super("Sean's Browser"); //this title appears at the very top of your screen/application  
 		currentURL = ""; //current URL gets an empty string
 		
 		
-		//SET UP ACTION LISTERN FOR TEXT FIELD 
+		//SET UP THE TEXT FIELD AND THE ACTION LISTENER FOR IT 
 		addressBar = new JTextField("https://en.wikipedia.org"); //they will have to delete this in order to put a real one in  
 		addressBar.addActionListener(
 			new ActionListener(){
@@ -35,7 +35,6 @@ public class ReadFile extends JFrame{
 		);
 		addressBar.setPreferredSize( new Dimension( 500, 40) );
 		addressBar.setFont(new Font("SansSerif", Font.BOLD, 20));
-		//add(addressBar, BorderLayout.NORTH);
 		
 		//SETTING UP THE PANEL 
 		navBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -58,6 +57,15 @@ public class ReadFile extends JFrame{
 			}
 		);
 
+		//SETUP ACTION LISTENER FOR FORWARD BUTTON
+		forwardButton.addActionListener(
+			new ActionListener(){
+				public void actionPerformed(ActionEvent e){
+					forwardButtonPressed(); 
+				}
+			}
+		);
+		
 		//SETUP ACTION LISTER FOR THE EDITOR PANE 
 		display = new JEditorPane(); 
 		display.setEditable(false); //would only be true for a program like notepad where you actually changed stuff inside. for this web browser you just view stuff 
@@ -81,8 +89,11 @@ public class ReadFile extends JFrame{
 	}
 	//********************************************************************************************************
 	
-	//load web information to display on the screen 
-	//make it private because we are not going to be using it in any class 
+	/**
+	 *  loadWebInformation - displays the html retrieved from the given url on the screen 
+	 * 
+	 * @param userText - the url of the website that we would like to view. 
+	 */
 	private void loadWebInformation(String userText){ //userText is the url that gets passed into the addressBar
 		try{
 			display.setPage(userText); // setPage is a VERY POWERFUL METHOD. DOES THE WORK FOR US
@@ -102,7 +113,10 @@ public class ReadFile extends JFrame{
 				
 	}
 	
-	//backButton method 
+	/**
+	 * backButton - this method is called when the user presses the back button.
+	 *  
+	 */
 	private void backButtonPressed(){
 		System.out.println("Back Button Pressed"); 
 		if(!(urlStack.isEmpty())){
@@ -113,5 +127,13 @@ public class ReadFile extends JFrame{
 		else{
 			System.out.println("Stack is empty"); 
 		}
+	}
+	
+	/**
+	 * forwardButton - this method is called when the user presses the forward button. 
+	 * 
+	 */
+	private void forwardButtonPressed(){
+		System.out.println("Forward Button Pressed");
 	}
 }
